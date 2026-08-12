@@ -73,8 +73,13 @@ from whichever initial method you are refining:
 import numpy as np
 from dcvcd.pipeline import DCvCDConfig, run_dcvcd
 
-z = np.load("embeddings.npy")        # (n, d) from CC / TCL / DivClust / ProPos / CoNR
-y0 = np.load("initial_labels.npy")   # (n,)  assignments from the same method
+embeddings_path = ""
+initial_labels_path = ""
+true_labels_path = ""
+output_path = ""
+
+z = np.load(embeddings_path)       # (n, d) from CC / TCL / DivClust / ProPos / CoNR
+y0 = np.load(initial_labels_path)  # (n,) assignments from the same method
 
 y_hat = run_dcvcd(z, y0, DCvCDConfig(theta_g=0.5, rho=0.90, seed=0))
 ```

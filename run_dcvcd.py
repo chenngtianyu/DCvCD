@@ -1,7 +1,6 @@
 """Command-line entry point.
 
-    python run_dcvcd.py --embeddings emb.npy --initial-labels y0.npy \
-                        --out yhat.npy [--true-labels y.npy] [--seed 0]
+    Fill the empty path strings below before running this script.
 
 Runs the graph side of Algorithm 1 on frozen embeddings. For the full loop with
 backbone fine-tuning, drive dcvcd.pipeline.run_dcvcd from Python and pass a
@@ -11,6 +10,13 @@ import argparse
 import numpy as np
 
 from dcvcd.pipeline import DCvCDConfig, run_dcvcd
+
+
+# Paths are intentionally blank for anonymous paper submission.
+EMBEDDINGS_PATH = ""
+INITIAL_LABELS_PATH = ""
+TRUE_LABELS_PATH = ""
+OUTPUT_PATH = ""
 
 
 def evaluate(y_true, y_pred):
@@ -29,15 +35,23 @@ def evaluate(y_true, y_pred):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--embeddings", required=True)
-    ap.add_argument("--initial-labels", required=True)
-    ap.add_argument("--true-labels", default=None)
-    ap.add_argument("--out", default="dcvcd_predictions.npy")
+    ap.add_argument("--embeddings", default=EMBEDDINGS_PATH)
+    ap.add_argument("--initial-labels", default=INITIAL_LABELS_PATH)
+    ap.add_argument("--true-labels", default=TRUE_LABELS_PATH)
+    ap.add_argument("--out", default=OUTPUT_PATH)
     ap.add_argument("--theta-g", type=float, default=0.5)
     ap.add_argument("--rho", type=float, default=0.90)
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()
+
+    missing = [name for name, value in (
+        ("embeddings", a.embeddings),
+        ("initial-labels", a.initial_labels),
+        ("out", a.out),
+    ) if not value]
+    if missing:
+        ap.error("fill the empty path(s): " + ", ".join(missing))
 
     z = np.load(a.embeddings)
     y0 = np.load(a.initial_labels)
